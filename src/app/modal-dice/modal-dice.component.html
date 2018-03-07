@@ -1,0 +1,6 @@
+<h2 mat-dialog-title>Choose a dice number for {{dice.color}}</h2>
+<mat-dialog-content>
+  <div fxLayout="row" fxLayoutAlign="space-around center">
+    <button *ngFor='let face of dice.faces' mat-raised-button color="primary" (click)="closeDialog(face)">{{face}}</button>
+  </div>
+</mat-dialog-content>
