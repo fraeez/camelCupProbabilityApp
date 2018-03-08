@@ -2,24 +2,29 @@ import * as _ from 'lodash';
 
 export enum Color {
   Orange = "Orange",
-  Green = "Green",
-  Blue = "Blue",
-  White = "White",
-  Yellow = "Yellow"
+    Green = "Green",
+    Blue = "Blue",
+    White = "White",
+    Yellow = "Yellow"
 }
 
-export class Stats {
+export class Result {
+  stats: Stat[];
+  totalIteration: number;
+}
+
+export class Stat {
+  color: Color;
   first: number;
   second: number;
-  constructor() {
-    this.first = -1;
-    this.second = -1;
-  }
+  firstPercent: number;
+  secondPercent: number;
+  position: number;
+  stack: number;
 }
 
 export class Camel {
   color: Color;
-  stats: Stats;
   position: number;
   stack: number;
 
@@ -41,17 +46,17 @@ export class Dice {
 }
 
 export class Turn {
-    dicesToRoll: Dice[];
+  dicesToRoll: Dice[];
 
-    constructor(dices: Dice[]) {
-        this.dicesToRoll = _.cloneDeep(dices);
-    }
+  constructor(dices: Dice[]) {
+    this.dicesToRoll = _.cloneDeep(dices);
+  }
 }
 
 export class Game {
   camels: Camel[];
   dices: Dice[];
-  turns: Turn[]; 
+  turns: Turn[];
 
   constructor(nbOfFaces: number = 3) {
     this.camels = [new Camel(Color.Blue), new Camel(Color.Orange), new Camel(Color.Green), new Camel(Color.White), new Camel(Color.Yellow)];

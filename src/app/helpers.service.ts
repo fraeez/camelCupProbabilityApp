@@ -1,7 +1,4 @@
 import {
-  fail
-} from 'assert';
-import {
   Injectable
 } from '@angular/core';
 import {
@@ -9,6 +6,8 @@ import {
   Color,
   Dice,
   Game,
+  Stat,
+  Result,
   Turn
 } from './types';
 
@@ -19,11 +18,11 @@ export class HelpersService {
 
   constructor() {}
 
-  simulateTurn(game: Game) {
+  simulateTurn(game: Game): Result {
     let turn: Turn = game.turns.slice(-1)[0];
     let orderPermuter: Color[][] = this.getOrderPermuter(turn.dicesToRoll.map((dice: Dice) => dice.color));
     let dices = this.diceRoller(turn.dicesToRoll.length, game.dices[0].faces);
-    let stats = game.camels.map(c => {
+    let stats: Stat[] = game.camels.map(c => {
       return {
         color: c.color,
         first: 0,
@@ -121,5 +120,9 @@ export class HelpersService {
 
     }
     return _.orderBy(camels, ['position', 'stack'], ['desc', 'desc']);
+  }
+
+  calculateEVBet(probabilyFirst: number, probabilySecond: number, price: number, winIfFisrt: number, winIfSecond: number): number {
+    return winIfFisrt * probabilyFirst + winIfSecond * probabilySecond - price * (1-probabilyFirst-probabilySecond);
   }
 }
