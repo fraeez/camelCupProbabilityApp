@@ -5,19 +5,14 @@ import {
   Component,
   OnInit
 } from '@angular/core';
-import {
-  Color,
-  Game,
-  Result,
-  Stat,
-  Turn
-} from '../types';
+import { BonusTile, Color, Game, Result, Stat, Turn } from '../types';
 import {
   MatDialog
 } from '@angular/material';
 import {
   ModalDiceComponent
 } from '../modal-dice/modal-dice.component';
+import { ModalTileComponent } from '../modal-tile/modal-tile.component';
 
 @Component({
   selector: 'app-game',
@@ -47,6 +42,12 @@ export class GameComponent implements OnInit {
       stat.ev5 = this.helpersService.calculateEVBet(stat.firstPercent, stat.secondPercent, 1, 5, 1);
       stat.ev3 = this.helpersService.calculateEVBet(stat.firstPercent, stat.secondPercent, 1, 3, 1);
       stat.ev2 = this.helpersService.calculateEVBet(stat.firstPercent, stat.secondPercent, 1, 2, 1);
+    })
+  }
+
+  openTileModal() {
+    const dialogRef = this.dialog.open(ModalTileComponent);
+    dialogRef.afterClosed().subscribe((tile: BonusTile) => {
     })
   }
 

@@ -1,15 +1,8 @@
+import { a, l } from '@angular/core/src/render3';
 import {
   Injectable
 } from '@angular/core';
-import {
-  Camel,
-  Color,
-  Dice,
-  Game,
-  Stat,
-  Result,
-  Turn
-} from './types';
+import { BonusType, Camel, Color, Dice, Game, Result, Stat, Turn } from './types';
 
 import * as _ from 'lodash';
 
@@ -17,6 +10,10 @@ import * as _ from 'lodash';
 export class HelpersService {
 
   constructor() {}
+
+  getTileTypes(): BonusType[] {
+    return [BonusType.Oasis, BonusType.Desert];
+  }
 
   simulateTurn(game: Game): Result {
     let turn: Turn = game.turns.slice(-1)[0];

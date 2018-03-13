@@ -1,0 +1,17 @@
+<h2 mat-dialog-title>Put a tile</h2>
+<mat-dialog-content>
+  <mat-form-field>
+    <mat-select [(value)]="selectedType" placeholder="Choose a tile type">
+      <mat-option [value]="type" *ngFor="let type of bonusType">{{type}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field>
+    <mat-select [(value)]="selectedPosition" placeholder="Choose a position">
+      <mat-option [value]="position" *ngFor="let position of positions">{{position}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-raised-button (click)="closeDialog(selectedType, selectedPosition)">Validate</button>
+  <button mat-raised-button>Cancel</button>
+</mat-dialog-actions>

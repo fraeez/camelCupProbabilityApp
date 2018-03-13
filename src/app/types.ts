@@ -8,6 +8,11 @@ export enum Color {
     Yellow = "Yellow"
 }
 
+export enum BonusType {
+  Oasis = "Oasis",
+  Desert = "Desert"
+}
+
 export class Result {
   stats: Stat[];
   totalIteration: number;
@@ -23,7 +28,7 @@ export class Stat {
   stack: number;
   ev5?: number;
   ev3?: number;
-  ev1?: number;
+  ev2?: number;
 }
 
 export class Camel {
@@ -56,14 +61,26 @@ export class Turn {
   }
 }
 
+export class BonusTile {
+  type: BonusType;
+  position: number;
+
+  constructor(type, position) {
+    this.type = type;
+    this.position = position;
+  } 
+}
+
 export class Game {
   camels: Camel[];
   dices: Dice[];
   turns: Turn[];
+  bonusTiles: BonusTile[];
 
   constructor(nbOfFaces: number = 3) {
     this.camels = [new Camel(Color.Blue), new Camel(Color.Orange), new Camel(Color.Green), new Camel(Color.White), new Camel(Color.Yellow)];
     this.dices = this.camels.map(camel => new Dice(camel.color, 3));
     this.turns = [new Turn(this.dices)];
+    this.bonusTiles = [];
   }
 }

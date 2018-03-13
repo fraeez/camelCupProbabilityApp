@@ -10,7 +10,9 @@ import {
   MatButtonModule,
   MatMenuModule,
   MatCardModule,
-  MatDialogModule
+  MatDialogModule,
+  MatInputModule,
+  MatSelectModule
 } from '@angular/material';
 import {
   FlexLayoutModule
@@ -33,6 +35,7 @@ import {
 } from './welcome/welcome.component';
 import { HelpersService } from './helpers.service';
 import { ModalDiceComponent } from './modal-dice/modal-dice.component';
+import { ModalTileComponent } from './modal-tile/modal-tile.component';
 
 const appRoutes: Routes = [{
     path: 'welcome',
@@ -56,14 +59,17 @@ const appRoutes: Routes = [{
     AppComponent,
     GameComponent,
     WelcomeComponent,
-    ModalDiceComponent
+    ModalDiceComponent,
+    ModalTileComponent
   ],
   imports: [
     BrowserModule,
     MatToolbarModule,
     MatButtonModule,
     MatMenuModule,
+    MatInputModule,
     MatCardModule,
+    MatSelectModule,
     BrowserAnimationsModule,
     MatDialogModule,
     FlexLayoutModule,
@@ -71,7 +77,7 @@ const appRoutes: Routes = [{
       appRoutes
     )
   ],
-  entryComponents:[ModalDiceComponent],
+  entryComponents:[ModalDiceComponent, ModalTileComponent],
   providers: [HelpersService],
   bootstrap: [AppComponent]
 })
