@@ -34,16 +34,20 @@ export class GameComponent implements OnInit {
   ngOnInit() {
     this.game = new Game();
     this.currentTurn = this.game.turns.slice(-1)[0];
-    this.result = this.helpersService.simulateTurn(this.game);
-    this.result.stats.map((stat: Stat) => {
-      console.log(stat.color, 5, this.helpersService.calculateEVBet(stat.firstPercent, stat.secondPercent, 1, 5, 1));
-      console.log(stat.color, 3, this.helpersService.calculateEVBet(stat.firstPercent, stat.secondPercent, 1, 3, 1));
-      console.log(stat.color, 2, this.helpersService.calculateEVBet(stat.firstPercent, stat.secondPercent, 1, 2, 1));
-    })
+    this.simulateTurnAndCalculateEV(this.game); 
   }
 
   isToRoll(color: Color): boolean {
     return this.currentTurn.dicesToRoll.find(dice => dice.color === color) ? true : false;
+  }
+
+  simulateTurnAndCalculateEV(game: Game) {
+    this.result = this.helpersService.simulateTurn(this.game);
+    this.result.stats.map((stat: Stat) => {
+      stat.ev5 = this.helpersService.calculateEVBet(stat.firstPercent, stat.secondPercent, 1, 5, 1);
+      stat.ev3 = this.helpersService.calculateEVBet(stat.firstPercent, stat.secondPercent, 1, 3, 1);
+      stat.ev2 = this.helpersService.calculateEVBet(stat.firstPercent, stat.secondPercent, 1, 2, 1);
+    })
   }
 
   openModalDice(color) {
@@ -59,12 +63,7 @@ export class GameComponent implements OnInit {
           this.currentTurn = new Turn(this.game.dices);
           this.game.turns.push(this.currentTurn);
         }
-        this.result = this.helpersService.simulateTurn(this.game);
-        this.result.stats.map((stat: Stat) => {
-          console.log(stat.color, 5, this.helpersService.calculateEVBet(stat.firstPercent, stat.secondPercent, 1, 5, 1));
-          console.log(stat.color, 3, this.helpersService.calculateEVBet(stat.firstPercent, stat.secondPercent, 1, 3, 1));
-          console.log(stat.color, 2, this.helpersService.calculateEVBet(stat.firstPercent, stat.secondPercent, 1, 2, 1));
-        })
+        this.simulateTurnAndCalculateEV(this.game); 
       }
     });
   }

@@ -1,5 +1,5 @@
 <div fxLayout="column">
-  <div fxLayout="row">
+  <div fxLayout="row" fxLayoutGap="10px">
     <mat-card *ngFor="let stat of result.stats">
       <mat-card-title>{{stat.color}}</mat-card-title>
       <mat-card-content>
@@ -7,6 +7,12 @@
         <div>current Stack: {{stat.stack}} </div>
         <div>first: {{stat.firstPercent | percent:'1.0-2'}}</div>
         <div>second: {{stat.secondPercent | percent:'1.0-2'}} </div>
+        <br>
+        <div>Expected Value:</div>
+        <br>
+        <div>card 5: {{stat.ev5 | number:'1.0-1'}} </div>
+        <div>card 3: {{stat.ev3 | number:'1.0-1'}} </div>
+        <div>card 2: {{stat.ev2 | number:'1.0-1'}} </div>
       </mat-card-content>
       <mat-card-actions>
         <button *ngIf="isToRoll(stat.color)" mat-raised-button (click)="openModalDice(stat.color)">Roll dice</button>

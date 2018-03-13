@@ -21,6 +21,9 @@ export class Stat {
   secondPercent: number;
   position: number;
   stack: number;
+  ev5?: number;
+  ev3?: number;
+  ev1?: number;
 }
 
 export class Camel {
