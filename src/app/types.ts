@@ -71,10 +71,13 @@ export class Turn {
 export class BonusTile {
   type: BonusType;
   position: number;
+  triggered: number;
+  ev: number;
 
   constructor(type, position) {
     this.type = type;
     this.position = position;
+    this.triggered = 0;
   } 
 }
 

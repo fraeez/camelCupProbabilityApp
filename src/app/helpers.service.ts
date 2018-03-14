@@ -5,17 +5,7 @@ import {
 import {
   Injectable
 } from '@angular/core';
-import {
-  BonusTile,
-  BonusType,
-  Camel,
-  Color,
-  Dice,
-  Game,
-  Result,
-  Stat,
-  Turn
-} from './types';
+import { BonusTile, BonusTileEV, BonusType, Camel, Color, Dice, Game, Result, Stat, Turn } from './types';
 
 import * as _ from 'lodash';
 
@@ -32,6 +22,7 @@ export class HelpersService {
     let turn: Turn = game.turns.slice(-1)[0];
     let orderPermuter: Color[][] = this.getOrderPermuter(turn.dicesToRoll.map((dice: Dice) => dice.color));
     let dices = this.diceRoller(turn.dicesToRoll.length, game.dices[0].faces);
+    _.forEach(game.bonusTiles, (bt => bt.triggered = 0));
     let stats: Stat[] = game.camels.map(c => {
       return {
         color: c.color,
@@ -47,11 +38,12 @@ export class HelpersService {
     _.forEach(orderPermuter, permutation => {
       _.forEach(dices, dice => {
         totalIteration++;
-        const camelOrder = this.moveCamels(_.cloneDeep(game.camels), _.cloneDeep(permutation), _.cloneDeep(dice), game.bonusTiles);
+        const camelOrder = this.moveCamels(_.cloneDeep(game.camels), _.cloneDeep(permutation), _.cloneDeep(dice),game.bonusTiles);
         stats.find(s => s.color === camelOrder[0].color).first++;
         stats.find(s => s.color === camelOrder[1].color).second++;
       })
     })
+    _.forEach(game.bonusTiles, (bt => bt.ev = bt.triggered / totalIteration));
 
     stats.map(s => {
       s.firstPercent = s.first / totalIteration;
@@ -125,6 +117,7 @@ export class HelpersService {
     let newPosition = camelToMove.position + diceResult;
     const bonusTile = bonusTiles.find((bt: BonusTile) => bt.position === newPosition);
     if (bonusTile) {
+      bonusTile.triggered++;
       newPosition = bonusTile.type === BonusType.Desert ? newPosition - 1 : newPosition + 1;
       if (bonusTile.type === BonusType.Desert) camelsOnTop = this.invertStack(camelsOnTop);
     }
@@ -151,7 +144,6 @@ export class HelpersService {
         color: permutation.shift()
       });
       camels = this.moveCamel(luckyCamel, dicesResults.shift(), camels, bonusTiles);
-
     }
     return _.orderBy(camels, ['position', 'stack'], ['desc', 'desc']);
   }
