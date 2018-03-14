@@ -38,7 +38,7 @@ export class HelpersService {
     _.forEach(orderPermuter, permutation => {
       _.forEach(dices, dice => {
         totalIteration++;
-        const camelOrder = this.moveCamels(_.cloneDeep(game.camels), _.cloneDeep(permutation), _.cloneDeep(dice),game.bonusTiles);
+        const camelOrder = this.moveCamels(_.cloneDeep(game.camels), _.cloneDeep(permutation), _.cloneDeep(dice), game.bonusTiles);
         stats.find(s => s.color === camelOrder[0].color).first++;
         stats.find(s => s.color === camelOrder[1].color).second++;
       })
@@ -146,8 +146,11 @@ export class HelpersService {
   }
 
   getAuthorizedPositionForTile(camels: Camel[], bonusTiles: BonusTile[]): number[] {
-    const min = _.min(camels.map(c => c.position));
-    return _.filter(_.range(min,17), position => !(_.find(camels, ['position',position]) || _.find(bonusTiles, ['position',position]) || _.find(bonusTiles, ['position',position+1]) || _.find(bonusTiles, ['position',position-1])))
+    const positionMap = camels.map(c => c.position);
+    const min = _.min(positionMap);
+    const max = 17// Math.min(_.max(positionMap) + 5, 17);
+    return _.filter(_.range(min,max), position => !(_.find(camels, ['position',position])))
+    //return _.filter(_.range(min,max), position => !(_.find(camels, ['position',position]) || _.find(bonusTiles, ['position',position]) || _.find(bonusTiles, ['position',position+1]) || _.find(bonusTiles, ['position',position-1])))
   }
 
   calculateEVBet(probabilyFirst: number, probabilySecond: number, price: number, winIfFisrt: number, winIfSecond: number): number {

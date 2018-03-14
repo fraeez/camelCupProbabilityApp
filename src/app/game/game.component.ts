@@ -49,13 +49,18 @@ export class GameComponent implements OnInit {
     const dialogRef = this.dialog.open(ModalTileComponent, {
       data: this.game
     });
-    
+
     dialogRef.afterClosed().subscribe((tile: BonusTile) => {
       if(tile) {
         this.game.bonusTiles.push(tile);
         this.simulateTurnAndCalculateEV(this.game);
       }
     })
+  }
+
+  removeTile(bonusTile: any[],index: number) {
+    bonusTile.splice(index,1);
+    this.simulateTurnAndCalculateEV(this.game);
   }
 
   openModalDice(color) {
