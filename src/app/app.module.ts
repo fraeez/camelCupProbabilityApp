@@ -12,6 +12,7 @@ import {
   MatCardModule,
   MatDialogModule,
   MatInputModule,
+  MatProgressSpinnerModule,
   MatSelectModule
 } from '@angular/material';
 import {
@@ -66,6 +67,7 @@ const appRoutes: Routes = [{
     BrowserModule,
     MatToolbarModule,
     MatButtonModule,
+    MatProgressSpinnerModule,
     MatMenuModule,
     MatInputModule,
     MatCardModule,

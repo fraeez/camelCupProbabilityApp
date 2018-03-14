@@ -1,5 +1,9 @@
-<div fxLayout="column" fxLayoutGap="10px">
-  <div fxLayout="row" fxLayoutGap="10px">
+<div *ngIf="!isLoaded" fxLayout="row" fxLayoutAlign="center" style="margin-top:30px">
+  <mat-spinner></mat-spinner>
+</div>
+<div fxLayout="column" *ngIf="isLoaded" fxLayoutGap="10px">
+  <h1 fxLayoutAlign="center">Camels</h1>
+  <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="center">
     <mat-card *ngFor="let stat of result.stats">
       <mat-card-title>{{stat.color}}</mat-card-title>
       <mat-card-content>
@@ -10,16 +14,27 @@
         <br>
         <div>Expected Value:</div>
         <br>
-        <div>card 5: {{stat.ev5 | number:'1.0-1'}} </div>
-        <div>card 3: {{stat.ev3 | number:'1.0-1'}} </div>
-        <div>card 2: {{stat.ev2 | number:'1.0-1'}} </div>
+        <div>card 5: {{stat.ev5 | number:'1.0-2'}} </div>
+        <div>card 3: {{stat.ev3 | number:'1.0-2'}} </div>
+        <div>card 2: {{stat.ev2 | number:'1.0-2'}} </div>
       </mat-card-content>
       <mat-card-actions>
         <button *ngIf="isToRoll(stat.color)" mat-raised-button (click)="openModalDice(stat.color)">Roll dice</button>
       </mat-card-actions>
     </mat-card>
   </div>
-  <div fxLayout="row" fxLayoutGap="10px">
+  <h1 fxLayoutAlign="center">Simulated Tiles</h1>
+  <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="center">
+    <mat-card *ngFor="let tile of tilesSimulated">
+      <mat-card-content>
+        <div>Tile type: {{tile.type}} </div>
+        <div>Tile position: {{tile.position}} </div>
+        <div>EV: {{tile.ev | number:'1.0-2'}}</div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+  <h1 fxLayoutAlign="center">Tiles on the board</h1>
+  <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="center">
     <mat-card *ngFor="let tile of game.bonusTiles; let index = index">
       <mat-card-content>
         <div>Tile type: {{tile.type}} </div>
@@ -34,7 +49,9 @@
       <button mat-raised-button (click)="openTileModal()">Add tile</button>
     </div>
   </div>
-  <p>
-    number of iteration: {{result.totalIteration}}
-  </p>
+  <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="center">
+    <p>
+      number of iteration: {{result.totalIteration}}
+    </p>
+  </div>
 </div>

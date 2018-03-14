@@ -5,14 +5,25 @@ import {
   Component,
   OnInit
 } from '@angular/core';
-import { BonusTile, Color, Game, Result, Stat, Turn } from '../types';
+import {
+  BonusTile,
+  BonusType,
+  Color,
+  Game,
+  Result,
+  Stat,
+  Turn
+} from '../types';
 import {
   MatDialog
 } from '@angular/material';
 import {
   ModalDiceComponent
 } from '../modal-dice/modal-dice.component';
-import { ModalTileComponent } from '../modal-tile/modal-tile.component';
+import {
+  ModalTileComponent
+} from '../modal-tile/modal-tile.component';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'app-game',
@@ -22,6 +33,8 @@ import { ModalTileComponent } from '../modal-tile/modal-tile.component';
 export class GameComponent implements OnInit {
   game: Game;
   result: Result;
+  isLoaded: boolean;
+  tilesSimulated: BonusTile[] = [];
   currentTurn: Turn;
 
   constructor(public helpersService: HelpersService, public dialog: MatDialog) {}
@@ -29,7 +42,7 @@ export class GameComponent implements OnInit {
   ngOnInit() {
     this.game = new Game();
     this.currentTurn = this.game.turns.slice(-1)[0];
-    this.simulateTurnAndCalculateEV(this.game); 
+    this.simulateTurnAndCalculateEV(this.game);
   }
 
   isToRoll(color: Color): boolean {
@@ -37,12 +50,30 @@ export class GameComponent implements OnInit {
   }
 
   simulateTurnAndCalculateEV(game: Game) {
-    this.result = this.helpersService.simulateTurn(this.game);
-    this.result.stats.map((stat: Stat) => {
-      stat.ev5 = this.helpersService.calculateEVBet(stat.firstPercent, stat.secondPercent, 1, 5, 1);
-      stat.ev3 = this.helpersService.calculateEVBet(stat.firstPercent, stat.secondPercent, 1, 3, 1);
-      stat.ev2 = this.helpersService.calculateEVBet(stat.firstPercent, stat.secondPercent, 1, 2, 1);
-    })
+    this.isLoaded = false;
+    setTimeout(() => {
+      this.tilesSimulated = [];
+      this.result = this.helpersService.simulateTurn(this.game);
+      this.result.stats.map((stat: Stat) => {
+        stat.ev5 = this.helpersService.calculateEVBet(stat.firstPercent, stat.secondPercent, 1, 5, 1);
+        stat.ev3 = this.helpersService.calculateEVBet(stat.firstPercent, stat.secondPercent, 1, 3, 1);
+        stat.ev2 = this.helpersService.calculateEVBet(stat.firstPercent, stat.secondPercent, 1, 2, 1);
+      })
+      let bonusTilesToTest = this.helpersService.getAuthorizedPositionForTile(game.camels, game.bonusTiles, this.currentTurn.dicesToRoll).reduce((bonusTiles, position) => {
+        bonusTiles.push(new BonusTile(BonusType.Desert, position))
+        bonusTiles.push(new BonusTile(BonusType.Oasis, position))
+        return bonusTiles;
+      }, []);
+      for (let bonusTile of bonusTilesToTest) {
+        let game = _.cloneDeep(this.game);
+        game.bonusTiles.push(bonusTile);
+        this.helpersService.simulateTurn(game);
+        this.tilesSimulated.push(bonusTile);
+      }
+      this.tilesSimulated = _.orderBy(this.tilesSimulated, ['ev'],['desc']);
+      this.isLoaded = true;
+    }, 0);
+
   }
 
   openTileModal() {
@@ -51,15 +82,15 @@ export class GameComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe((tile: BonusTile) => {
-      if(tile) {
+      if (tile) {
         this.game.bonusTiles.push(tile);
         this.simulateTurnAndCalculateEV(this.game);
       }
     })
   }
 
-  removeTile(bonusTile: any[],index: number) {
-    bonusTile.splice(index,1);
+  removeTile(bonusTile: any[], index: number) {
+    bonusTile.splice(index, 1);
     this.simulateTurnAndCalculateEV(this.game);
   }
 
@@ -77,7 +108,7 @@ export class GameComponent implements OnInit {
           this.game.turns.push(this.currentTurn);
           this.game.bonusTiles = [];
         }
-        this.simulateTurnAndCalculateEV(this.game); 
+        this.simulateTurnAndCalculateEV(this.game);
       }
     });
   }

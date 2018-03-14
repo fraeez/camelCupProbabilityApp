@@ -5,7 +5,18 @@ import {
 import {
   Injectable
 } from '@angular/core';
-import { BonusTile, BonusTileEV, BonusType, Camel, Color, Dice, Game, Result, Stat, Turn } from './types';
+import {
+  BonusTile,
+  BonusTileEV,
+  BonusType,
+  Camel,
+  Color,
+  Dice,
+  Game,
+  Result,
+  Stat,
+  Turn
+} from './types';
 
 import * as _ from 'lodash';
 
@@ -102,7 +113,7 @@ export class HelpersService {
 
   invertStack(camels: Camel[]) {
     camels = _.orderBy(camels, "stack");
-    let maxStack = camels[camels.length-1].stack;
+    let maxStack = camels[camels.length - 1].stack;
     _.forEach(camels, c => c.stack = maxStack--);
     return camels;
   }
@@ -145,12 +156,16 @@ export class HelpersService {
     return _.orderBy(camels, ['position', 'stack'], ['desc', 'desc']);
   }
 
-  getAuthorizedPositionForTile(camels: Camel[], bonusTiles: BonusTile[]): number[] {
-    const positionMap = camels.map(c => c.position);
+  getAuthorizedPositionForTile(camels: Camel[], bonusTiles: BonusTile[], dices: Dice[] = []): number[] {
+    const reducedCamels = camels.reduce((array, camel) => {
+      if(dices.length === 0) return camels;
+      if (dices.find((dice: Dice) => dice.color === camel.color)) array.push(camel);
+      return array;
+    }, [])
+    const positionMap = reducedCamels.map(c => c.position);
     const min = _.min(positionMap);
-    const max = 17// Math.min(_.max(positionMap) + 5, 17);
-    return _.filter(_.range(min,max), position => !(_.find(camels, ['position',position])))
-    //return _.filter(_.range(min,max), position => !(_.find(camels, ['position',position]) || _.find(bonusTiles, ['position',position]) || _.find(bonusTiles, ['position',position+1]) || _.find(bonusTiles, ['position',position-1])))
+    const max = Math.min(_.max(positionMap) + 4, 17);
+    return _.filter(_.range(min, max), position => !(_.find(camels, ['position', position]) || _.find(bonusTiles, ['position', position]) || _.find(bonusTiles, ['position', position + 1]) || _.find(bonusTiles, ['position', position - 1])))
   }
 
   calculateEVBet(probabilyFirst: number, probabilySecond: number, price: number, winIfFisrt: number, winIfSecond: number): number {
