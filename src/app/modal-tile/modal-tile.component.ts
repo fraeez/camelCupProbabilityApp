@@ -1,7 +1,7 @@
-import { BonusTile, BonusType } from '../types';
+import { BonusTile, BonusType, Game } from '../types';
 import { HelpersService } from '../helpers.service';
-import { Component, OnInit } from '@angular/core';
-import { MatDialogRef } from '@angular/material';
+import { Component, Inject, OnInit } from '@angular/core';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import * as _ from 'lodash';
 
 @Component({
@@ -15,11 +15,11 @@ export class ModalTileComponent implements OnInit {
   positions: number[];
   selectedPosition: number;
 
-  constructor(public dialogRef: MatDialogRef<ModalTileComponent>, public helper: HelpersService) { }
+  constructor(public dialogRef: MatDialogRef<ModalTileComponent>, public helper: HelpersService, @Inject(MAT_DIALOG_DATA) public game: Game) { }
 
   ngOnInit() { 
     this.bonusType = this.helper.getTileTypes();
-    this.positions = _.range(2,15);
+    this.positions = this.helper.getAuthorizedPositionForTile(this.game.camels, this.game.bonusTiles);
   }
 
   closeDialog(type, position) {

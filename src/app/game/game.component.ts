@@ -46,7 +46,10 @@ export class GameComponent implements OnInit {
   }
 
   openTileModal() {
-    const dialogRef = this.dialog.open(ModalTileComponent);
+    const dialogRef = this.dialog.open(ModalTileComponent, {
+      data: this.game
+    });
+    
     dialogRef.afterClosed().subscribe((tile: BonusTile) => {
       if(tile) {
         this.game.bonusTiles.push(tile);

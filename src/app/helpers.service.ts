@@ -156,6 +156,10 @@ export class HelpersService {
     return _.orderBy(camels, ['position', 'stack'], ['desc', 'desc']);
   }
 
+  getAuthorizedPositionForTile(camels: Camel[], bonusTiles: BonusTile[]): number[] {
+    return _.filter(_.range(2,17), position => !(_.find(camels, ['position',position]) || _.find(bonusTiles, ['position',position]) || _.find(bonusTiles, ['position',position+1]) || _.find(bonusTiles, ['position',position-1])))
+  }
+
   calculateEVBet(probabilyFirst: number, probabilySecond: number, price: number, winIfFisrt: number, winIfSecond: number): number {
     return winIfFisrt * probabilyFirst + winIfSecond * probabilySecond - price * (1 - probabilyFirst - probabilySecond);
   }
