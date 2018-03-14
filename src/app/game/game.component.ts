@@ -61,7 +61,7 @@ export class GameComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(diceNumber => {
       if (diceNumber) {
-        this.game.camels = this.helpersService.moveCamel(this.game.camels.find(c => c.color === color), diceNumber, this.game.camels);
+        this.game.camels = this.helpersService.moveCamel(this.game.camels.find(c => c.color === color), diceNumber, this.game.camels, this.game.bonusTiles);
         this.currentTurn.dicesToRoll.splice(this.currentTurn.dicesToRoll.findIndex(dice => dice.color === color), 1);
         if (this.currentTurn.dicesToRoll.length === 0) {
           this.currentTurn = new Turn(this.game.dices);

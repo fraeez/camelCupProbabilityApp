@@ -1,8 +1,21 @@
-import { a, l } from '@angular/core/src/render3';
+import {
+  a,
+  l
+} from '@angular/core/src/render3';
 import {
   Injectable
 } from '@angular/core';
-import { BonusType, Camel, Color, Dice, Game, Result, Stat, Turn } from './types';
+import {
+  BonusTile,
+  BonusType,
+  Camel,
+  Color,
+  Dice,
+  Game,
+  Result,
+  Stat,
+  Turn
+} from './types';
 
 import * as _ from 'lodash';
 
@@ -34,7 +47,7 @@ export class HelpersService {
     _.forEach(orderPermuter, permutation => {
       _.forEach(dices, dice => {
         totalIteration++;
-        const camelOrder = this.moveCamels(_.cloneDeep(game.camels), _.cloneDeep(permutation), _.cloneDeep(dice));
+        const camelOrder = this.moveCamels(_.cloneDeep(game.camels), _.cloneDeep(permutation), _.cloneDeep(dice), game.bonusTiles);
         stats.find(s => s.color === camelOrder[0].color).first++;
         stats.find(s => s.color === camelOrder[1].color).second++;
       })
@@ -54,7 +67,7 @@ export class HelpersService {
 
   private getOrderPermuter(data: any[]): any[][] {
     let permutation = [data.slice()];
-    return permutation[0].length > 0 ? this.permutations(data.length, data, permutation): permutation;
+    return permutation[0].length > 0 ? this.permutations(data.length, data, permutation) : permutation;
   }
 
   swap(arr: any[], x: number, y: number) {
@@ -80,7 +93,9 @@ export class HelpersService {
   }
 
   diceRoller(numOfDice, numberOfFaces) {
-    if(numOfDice == 0) return [[]];
+    if (numOfDice == 0) return [
+      []
+    ];
     const dice = _.fill(new Array(numOfDice), numberOfFaces);
     return _.reduce(dice, (a, b) => {
       return _.flatten(_.map(a, (x) => {
@@ -93,33 +108,55 @@ export class HelpersService {
     ]);
   };
 
-  moveCamel(camelToMove: Camel, dice: number, camels: Camel[]): Camel[] {
-    const camelsOnTop: Camel[] = _.filter(camels, (c: Camel) => c.position === camelToMove.position && c.stack > camelToMove.stack);
-    camelsOnTop.push(camelToMove);
-    const diceResult = dice;
-    const newPosition = camelToMove.position + diceResult;
-    const receivingStack = _.filter(camels, {
-      position: newPosition
-    }).length;
-    _.forEach(camelsOnTop, (c: Camel) => {
-      c.position = newPosition;
-      c.stack += receivingStack - camelToMove.stack;
-    })
+  invertStack(camels: Camel[]) {
+    const maxStack = camels.reduce((maxStack, camel) => {
+      if (camel.stack > maxStack) maxStack = camel.stack
+      return maxStack;
+    }, 0)
+    const length = camels.length;
+    camels.map(c => c.stack = maxStack - c.stack + length);
     return camels;
   }
 
-  moveCamels(camels: Camel[], permutation: Color[], dicesResults: number[]): Camel[] {
+  moveCamel(camelToMove: Camel, dice: number, camels: Camel[], bonusTiles: BonusTile[]): Camel[] {
+    let camelsOnTop: Camel[] = _.filter(camels, (c: Camel) => c.position === camelToMove.position && c.stack > camelToMove.stack);
+    camelsOnTop.push(camelToMove);
+    const diceResult = dice;
+    let newPosition = camelToMove.position + diceResult;
+    const bonusTile = bonusTiles.find((bt: BonusTile) => bt.position === newPosition);
+    if (bonusTile) {
+      newPosition = bonusTile.type === BonusType.Desert ? newPosition - 1 : newPosition + 1;
+      if (bonusTile.type === BonusType.Desert) camelsOnTop = this.invertStack(camelsOnTop);
+    }
+    const camelsOnStack = _.filter(camels, {
+      position: newPosition
+    });
+
+    _.forEach(camelsOnTop, (c: Camel) => {
+      c.position = newPosition;
+      c.stack += ((bonusTile && bonusTile.type === BonusType.Desert) ? 0 : camelsOnStack.length) - camelToMove.stack;
+    })
+
+    if (bonusTile && bonusTile.type === BonusType.Desert) {
+      _.forEach(camelsOnStack, (c: Camel) => {
+        c.stack += camelsOnTop.length;
+      })
+    }
+    return camels;
+  }
+
+  moveCamels(camels: Camel[], permutation: Color[], dicesResults: number[], bonusTiles: BonusTile[]): Camel[] {
     while (permutation.length > 0) {
       const luckyCamel: Camel = _.find(camels, {
         color: permutation.shift()
       });
-      camels = this.moveCamel(luckyCamel, dicesResults.shift(), camels);
+      camels = this.moveCamel(luckyCamel, dicesResults.shift(), camels, bonusTiles);
 
     }
     return _.orderBy(camels, ['position', 'stack'], ['desc', 'desc']);
   }
 
   calculateEVBet(probabilyFirst: number, probabilySecond: number, price: number, winIfFisrt: number, winIfSecond: number): number {
-    return winIfFisrt * probabilyFirst + winIfSecond * probabilySecond - price * (1-probabilyFirst-probabilySecond);
+    return winIfFisrt * probabilyFirst + winIfSecond * probabilySecond - price * (1 - probabilyFirst - probabilySecond);
   }
 }

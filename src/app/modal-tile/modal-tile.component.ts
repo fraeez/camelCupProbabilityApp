@@ -19,7 +19,7 @@ export class ModalTileComponent implements OnInit {
 
   ngOnInit() { 
     this.bonusType = this.helper.getTileTypes();
-    this.positions = _.range(1,15);
+    this.positions = _.range(2,15);
   }
 
   closeDialog(type, position) {
