@@ -48,6 +48,9 @@ export class GameComponent implements OnInit {
   openTileModal() {
     const dialogRef = this.dialog.open(ModalTileComponent);
     dialogRef.afterClosed().subscribe((tile: BonusTile) => {
+      if(tile) {
+        this.game.bonusTiles.push(tile);
+      }
     })
   }
 
@@ -63,6 +66,7 @@ export class GameComponent implements OnInit {
         if (this.currentTurn.dicesToRoll.length === 0) {
           this.currentTurn = new Turn(this.game.dices);
           this.game.turns.push(this.currentTurn);
+          this.game.bonusTiles = [];
         }
         this.simulateTurnAndCalculateEV(this.game); 
       }

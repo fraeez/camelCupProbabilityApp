@@ -26,4 +26,8 @@ export class ModalTileComponent implements OnInit {
     this.dialogRef.close(new BonusTile(type, position));
   }
 
+  cancel() {
+    this.dialogRef.close();
+  }
+
 }

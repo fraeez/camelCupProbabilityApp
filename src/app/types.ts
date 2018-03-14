@@ -9,8 +9,8 @@ export enum Color {
 }
 
 export enum BonusType {
-  Oasis = "Oasis",
-  Desert = "Desert"
+  Oasis = "Oasis +1",
+  Desert = "Desert -1"
 }
 
 export class Result {
@@ -29,6 +29,13 @@ export class Stat {
   ev5?: number;
   ev3?: number;
   ev2?: number;
+  bonusTileEV?: BonusTileEV[];
+}
+
+export class BonusTileEV {
+  position: number;
+  type: BonusType;
+  numberOccurence: number;
 }
 
 export class Camel {

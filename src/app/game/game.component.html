@@ -19,8 +19,16 @@
       </mat-card-actions>
     </mat-card>
   </div>
-  <div>
-    <button mat-raised-button (click)="openTileModal()">Add tile</button>
+  <div fxLayout="row" fxLayoutGap="10px">
+    <mat-card *ngFor="let tile of game.bonusTiles">
+      <mat-card-content>
+        <div>Tile type: {{tile.type}} </div>
+        <div>Tile position: {{tile.position}} </div>
+      </mat-card-content>
+    </mat-card>
+    <div>
+      <button mat-raised-button (click)="openTileModal()">Add tile</button>
+    </div>
   </div>
   <p>
     number of iteration: {{result.totalIteration}}
