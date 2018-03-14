@@ -101,12 +101,9 @@ export class HelpersService {
   };
 
   invertStack(camels: Camel[]) {
-    const maxStack = camels.reduce((maxStack, camel) => {
-      if (camel.stack > maxStack) maxStack = camel.stack
-      return maxStack;
-    }, 0)
-    const length = camels.length;
-    camels.map(c => c.stack = maxStack - c.stack + length);
+    camels = _.orderBy(camels, "stack");
+    let maxStack = camels[camels.length-1].stack;
+    _.forEach(camels, c => c.stack = maxStack--);
     return camels;
   }
 
@@ -127,7 +124,7 @@ export class HelpersService {
 
     _.forEach(camelsOnTop, (c: Camel) => {
       c.position = newPosition;
-      c.stack += ((bonusTile && bonusTile.type === BonusType.Desert) ? 0 : camelsOnStack.length) - camelToMove.stack;
+      c.stack += ((bonusTile && bonusTile.type === BonusType.Desert) ? 0 : camelsOnStack.length - camelToMove.stack);
     })
 
     if (bonusTile && bonusTile.type === BonusType.Desert) {
