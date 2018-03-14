@@ -61,6 +61,8 @@ export class HelpersService {
       s.secondPercent = s.second / totalIteration;
     })
 
+    stats = _.orderBy(stats, ['position', 'stack'], ['desc', 'desc']);
+
     return {
       stats: stats,
       totalIteration: totalIteration
@@ -163,7 +165,7 @@ export class HelpersService {
       return array;
     }, [])
     const positionMap = reducedCamels.map(c => c.position);
-    const min = _.min(positionMap);
+    const min = Math.max(_.min(positionMap),2);
     const max = Math.min(_.max(positionMap) + 4, 17);
     return _.filter(_.range(min, max), position => !(_.find(camels, ['position', position]) || _.find(bonusTiles, ['position', position]) || _.find(bonusTiles, ['position', position + 1]) || _.find(bonusTiles, ['position', position - 1])))
   }
