@@ -149,7 +149,8 @@ export class HelpersService {
   }
 
   getAuthorizedPositionForTile(camels: Camel[], bonusTiles: BonusTile[]): number[] {
-    return _.filter(_.range(2,17), position => !(_.find(camels, ['position',position]) || _.find(bonusTiles, ['position',position]) || _.find(bonusTiles, ['position',position+1]) || _.find(bonusTiles, ['position',position-1])))
+    const min = _.min(camels.map(c => c.position));
+    return _.filter(_.range(min,17), position => !(_.find(camels, ['position',position]) || _.find(bonusTiles, ['position',position]) || _.find(bonusTiles, ['position',position+1]) || _.find(bonusTiles, ['position',position-1])))
   }
 
   calculateEVBet(probabilyFirst: number, probabilySecond: number, price: number, winIfFisrt: number, winIfSecond: number): number {
