@@ -2,6 +2,23 @@
   <mat-spinner></mat-spinner>
 </div>
 <div fxLayout="column" *ngIf="isLoaded" fxLayoutGap="10px">
+  <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="center">
+    <mat-card>
+      <mat-card-content>
+        <div>Best move: {{bestMoove.name}} </div>
+        <div>EV: {{bestMoove.ev}} </div>
+        <div *ngIf="bestMoove.tile">
+          <div>Tile type: {{bestMoove.tile.type}} </div>
+          <div>Tile position: {{bestMoove.tile.position}} </div>
+        </div>
+        <div *ngIf="bestMoove.bet">
+        <div>card 5: {{bestMoove.bet.ev5 | number:'1.0-2'}} </div>
+        <div>card 3: {{bestMoove.bet.ev3 | number:'1.0-2'}} </div>
+        <div>card 2: {{bestMoove.bet.ev2 | number:'1.0-2'}} </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
   <h1 fxLayoutAlign="center">Camels</h1>
   <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="center">
     <mat-card *ngFor="let stat of result.stats">

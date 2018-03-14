@@ -60,6 +60,26 @@ export class Dice {
   }
 }
 
+export enum MooveEnum {
+  ROLL_DICE = 'Roll a dice',
+  PUT_TILE = 'Put a tile',
+  BET = 'Bet'
+}
+
+export class BestMoove {
+  name: MooveEnum;
+  ev: number;
+  tile? : BonusTile;
+  bet? : Stat;
+
+  constructor(name: MooveEnum, ev: number, data?: any) {
+    this.name = name;
+    this.ev = ev;
+    if(name === MooveEnum.BET) this.bet = data;
+    if(name === MooveEnum.PUT_TILE) this.tile = data;
+  }
+}
+
 export class Turn {
   dicesToRoll: Dice[];
 

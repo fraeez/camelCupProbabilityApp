@@ -6,16 +6,18 @@ import {
   Injectable
 } from '@angular/core';
 import {
-  BonusTile,
-  BonusTileEV,
-  BonusType,
-  Camel,
-  Color,
-  Dice,
-  Game,
-  Result,
-  Stat,
-  Turn
+    BestMoove,
+    BonusTile,
+    BonusTileEV,
+    BonusType,
+    Camel,
+    Color,
+    Dice,
+    Game,
+    MooveEnum,
+    Result,
+    Stat,
+    Turn,
 } from './types';
 
 import * as _ from 'lodash';
@@ -172,5 +174,31 @@ export class HelpersService {
 
   calculateEVBet(probabilyFirst: number, probabilySecond: number, price: number, winIfFisrt: number, winIfSecond: number): number {
     return winIfFisrt * probabilyFirst + winIfSecond * probabilySecond - price * (1 - probabilyFirst - probabilySecond);
+  }
+
+  getBestMoove(stats: Stat[], bonusTiles: BonusTile[]): BestMoove {
+    let max = -1;
+    const bestStat: Stat = stats.reduce((best: Stat, stat: Stat) => {
+      if(stat.ev5 > max) {
+        max = stat.ev5;
+        best = stat;
+      } 
+      return best;
+    },new Stat())
+    max = 0;
+    const bestBonus: BonusTile = bonusTiles.reduce((best: BonusTile, bonusTile: BonusTile) => {
+      if(bonusTile.ev > max) {
+        max = bonusTile.ev;
+        best = bonusTile;
+      };
+      return best;
+    },new BonusTile(BonusType.Desert,0))
+
+    if(bestStat.ev5 > bestBonus.ev) {
+      return bestStat.ev5 > 1 ? new BestMoove(MooveEnum.BET, bestStat.ev5, bestStat) : new BestMoove(MooveEnum.ROLL_DICE, 1);
+    }
+    else {
+      return bestBonus.ev > 1 ? new BestMoove(MooveEnum.PUT_TILE, bestBonus.ev, bestBonus) : new BestMoove(MooveEnum.ROLL_DICE, 1);
+    }
   }
 }
