@@ -3,8 +3,8 @@
     <mat-card *ngFor="let stat of result.stats">
       <mat-card-title>{{stat.color}}</mat-card-title>
       <mat-card-content>
-        <div>current Position: {{stat.position}} </div>
-        <div>current Stack: {{stat.stack}} </div>
+        <div>current case: {{stat.position}} </div>
+        <div>current stack: {{stat.stack}} </div>
         <div>first: {{stat.firstPercent | percent:'1.0-2'}}</div>
         <div>second: {{stat.secondPercent | percent:'1.0-2'}} </div>
         <br>

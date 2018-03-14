@@ -50,6 +50,7 @@ export class GameComponent implements OnInit {
     dialogRef.afterClosed().subscribe((tile: BonusTile) => {
       if(tile) {
         this.game.bonusTiles.push(tile);
+        this.simulateTurnAndCalculateEV(this.game);
       }
     })
   }
