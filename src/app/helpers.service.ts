@@ -116,7 +116,6 @@ export class HelpersService {
   };
 
   invertStack(camels: Camel[]) {
-    camels = _.orderBy(camels, "stack");
     let maxStack = camels[camels.length - 1].stack;
     _.forEach(camels, c => c.stack = maxStack--);
     return camels;
@@ -128,18 +127,25 @@ export class HelpersService {
     const diceResult = dice;
     let newPosition = camelToMove.position + diceResult;
     const bonusTile = bonusTiles.find((bt: BonusTile) => bt.position === newPosition);
+    camelsOnTop = _.orderBy(camelsOnTop, ['stack']);
     if (bonusTile) {
       bonusTile.triggered++;
       newPosition = bonusTile.type === BonusType.Desert ? newPosition - 1 : newPosition + 1;
-      if (bonusTile.type === BonusType.Desert) camelsOnTop = this.invertStack(camelsOnTop);
+      if (bonusTile.type === BonusType.Desert) {
+         camelsOnTop = this.invertStack(camelsOnTop);
+        camelsOnTop = _.orderBy(camelsOnTop, ['stack']);
+      }
     }
+    const minStack = camelsOnTop[0].stack;
+    _.forEach(camelsOnTop, camel => camel.stack -= minStack);
+
     const camelsOnStack = _.filter(camels, {
       position: newPosition
     });
 
     _.forEach(camelsOnTop, (c: Camel) => {
       c.position = newPosition;
-      c.stack += ((bonusTile && bonusTile.type === BonusType.Desert) ? 0 : camelsOnStack.length - camelToMove.stack);
+      c.stack += ((bonusTile && bonusTile.type === BonusType.Desert) ? 0 : camelsOnStack.length);
     })
 
     if (bonusTile && bonusTile.type === BonusType.Desert) {
@@ -174,31 +180,5 @@ export class HelpersService {
 
   calculateEVBet(probabilyFirst: number, probabilySecond: number, price: number, winIfFisrt: number, winIfSecond: number): number {
     return winIfFisrt * probabilyFirst + winIfSecond * probabilySecond - price * (1 - probabilyFirst - probabilySecond);
-  }
-
-  getBestMoove(stats: Stat[], bonusTiles: BonusTile[]): BestMoove {
-    let max = -1;
-    const bestStat: Stat = stats.reduce((best: Stat, stat: Stat) => {
-      if(stat.ev5 > max) {
-        max = stat.ev5;
-        best = stat;
-      } 
-      return best;
-    },new Stat())
-    max = 0;
-    const bestBonus: BonusTile = bonusTiles.reduce((best: BonusTile, bonusTile: BonusTile) => {
-      if(bonusTile.ev > max) {
-        max = bonusTile.ev;
-        best = bonusTile;
-      };
-      return best;
-    },new BonusTile(BonusType.Desert,0))
-
-    if(bestStat.ev5 > bestBonus.ev) {
-      return bestStat.ev5 > 1 ? new BestMoove(MooveEnum.BET, bestStat.ev5, bestStat) : new BestMoove(MooveEnum.ROLL_DICE, 1);
-    }
-    else {
-      return bestBonus.ev > 1 ? new BestMoove(MooveEnum.PUT_TILE, bestBonus.ev, bestBonus) : new BestMoove(MooveEnum.ROLL_DICE, 1);
-    }
   }
 }

@@ -72,7 +72,6 @@ export class GameComponent implements OnInit {
         this.tilesSimulated.push(bonusTile);
       }
       this.tilesSimulated = _.orderBy(this.tilesSimulated, ['ev'],['desc']);
-      this.bestMoove = this.helpersService.getBestMoove(this.result.stats, this.tilesSimulated);
       this.isLoaded = true;
     }, 0);
 
